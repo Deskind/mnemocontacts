@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="635.0" xmlns="http://javafx.com/javafx/8.0.72" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.deskind.mnemocardsfx.mnemocontacts.controllers.MainController">
+    <children>
+      <Button fx:id="showContacts" layoutX="274.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleShowContacts" text="Show Contacts" />
+      <Accordion fx:id="accordionWithContacts" layoutX="100.0" layoutY="78.0" prefHeight="133.0" prefWidth="436.0" />
+    </children>
+</AnchorPane>
