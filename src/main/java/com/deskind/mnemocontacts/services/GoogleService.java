@@ -13,12 +13,6 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.people.v1.People;
 import com.google.api.services.people.v1.PeopleScopes;
-import com.google.api.services.people.v1.model.ListConnectionsResponse;
-import com.google.api.services.people.v1.model.Name;
-import com.google.api.services.people.v1.model.Person;
-import com.google.api.services.people.v1.model.PhoneNumber;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -79,7 +73,7 @@ public class GoogleService {
                 new GoogleAuthorizationCodeFlow.Builder(
                         HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
                 .setDataStoreFactory(DATA_STORE_FACTORY)
-                .setAccessType("offline")
+                .setAccessType("online")
                 .build();
         Credential credential = new AuthorizationCodeInstalledApp(
             flow, new LocalServerReceiver()).authorize("user");
@@ -98,48 +92,6 @@ public class GoogleService {
         return new People.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-    }
-
-    public static void main(String [] args) throws IOException, Exception {
-        People service = getPeopleService();
-
-        // Request 10 connections.
-        ListConnectionsResponse response = service.people().connections()
-                .list("people/me")
-                .setRequestMaskIncludeField("person.names,person.emailAddresses,person.phoneNumbers")
-                .setPageSize(150)
-                .execute();
-
-        // Print display name of connections if available.
-        List<Person> connections = response.getConnections();
-        File f = new File("Contacts.txt");
-        FileWriter fileWriter = new FileWriter(f);
-        String displayName = "";
-        String number = "";
-        if (connections != null && connections.size() > 0) {
-            for (Person person : connections) {
-                List<Name> names = person.getNames();
-                List<PhoneNumber> phones = person.getPhoneNumbers();
-                if (names != null && names.size() > 0) {
-                    Name name = person.getNames().get(0);
-                    displayName = name.getDisplayName();
-                    System.out.println("Name: " + displayName);
-                } else {
-                    System.out.println("No names available for connection.");
-                }
-                if(phones==null){
-                    System.out.println("Contact has no phones");
-                }else {
-                    PhoneNumber pn = person.getPhoneNumbers().get(0);
-                    number  = pn.getValue();
-                    System.out.println("Contact phone is " + number);
-                    fileWriter.write( displayName + "   " + number + " " + System.lineSeparator());
-                }
-            }
-        } else {
-            System.out.println("No connections found.");
-        }
-        fileWriter.close();
     }
 
 }

@@ -1,6 +1,7 @@
 package com.deskind.mnemocontacts.controllers;
 
 import com.deskind.mnemocontacts.services.GoogleService;
+import com.deskind.mnemocontacts.utilities.PhoneNumberProcessor;
 import com.google.api.services.people.v1.People;
 import com.google.api.services.people.v1.model.ListConnectionsResponse;
 import com.google.api.services.people.v1.model.Name;
@@ -39,6 +40,7 @@ public class MainController implements Initializable {
         TitledPane titledPane = null;
         AnchorPane anchorPane = null;
         List<TitledPane> titledPanes = new ArrayList<TitledPane>();
+        PhoneNumberProcessor phoneNumberProcessor = new  PhoneNumberProcessor();
         
         try {
             //Getting people service
@@ -47,7 +49,7 @@ public class MainController implements Initializable {
             ListConnectionsResponse response = people.people().connections()
                     .list("people/me")
                     .setRequestMaskIncludeField("person.names,person.emailAddresses,person.phoneNumbers")
-                    .setPageSize(20)
+                    .setPageSize(5)
                     .execute();
             //Getting list of people from connections
             list = response.getConnections();
@@ -58,17 +60,22 @@ public class MainController implements Initializable {
         personsList = list;
         //iterate over list and show mnemo contacts
         for(Person p : list){
+            //Get person names
             List<Name> names = p.getNames();
+            //Get person PhoneNumbers
             List<PhoneNumber> phones = p.getPhoneNumbers();
-            
+            //Initialize titled pane and anchore pane with new Instance 
             titledPane = new TitledPane();
-                anchorPane = new AnchorPane();
-                anchorPane.getChildren().add(new Label(phones.get(0).getValue()));
+            anchorPane = new AnchorPane();
+            //Compose anchore pane
+            for(PhoneNumber phoneNumber : phones){
+                anchorPane.getChildren().add(new Label(phoneNumber.getValue()));
+                anchorPane.getChildren().add(phoneNumberProcessor.processPhoneNumber(phoneNumber));
+            }
+            //Configure titled pane
             titledPane.setText(names.get(0).getDisplayName());
             titledPane.setContent(anchorPane);
-            
-                
-                
+            //Add pane to collection
             titledPanes.add(titledPane);
         }
         accordionWithContacts.getPanes().addAll(titledPanes);
