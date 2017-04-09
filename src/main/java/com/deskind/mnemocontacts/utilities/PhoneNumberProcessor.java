@@ -2,6 +2,10 @@
 package com.deskind.mnemocontacts.utilities;
 
 import com.google.api.services.people.v1.model.PhoneNumber;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -10,8 +14,10 @@ import javafx.scene.layout.HBox;
 public class PhoneNumberProcessor {
     
     public HBox processPhoneNumber(PhoneNumber phoneNumber){
-        String number = phoneNumber.getValue();
-        HBox hBox = new HBox(5);
+        String n = phoneNumber.getValue();
+        String num = n.replaceAll("\\ ", "");
+        String number = num.replaceAll("\\-", "");
+        HBox hBox = new HBox(10);
         Image image = null;
         
         String [] numberParts = new String[3];
@@ -21,7 +27,12 @@ public class PhoneNumberProcessor {
         numberParts[2] = number.substring(number.length()-2);
         
         for(int i = 0 ; i < numberParts.length; i++){
-            image = new Image("/cards/"+numberParts[i]+".jpg");
+            
+            try {
+                image = new Image(new FileInputStream("c:\\Users\\Desk1nd\\Documents\\NetBeansProjects\\mnemocontacts\\cards\\"+numberParts[i]+".jpg"), 150, 200, true, true);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(PhoneNumberProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            }
             if(image == null){
                 System.out.println("No such card!");
             }else{
@@ -30,8 +41,6 @@ public class PhoneNumberProcessor {
             }
             
         }
-        System.out.println("------->" + numberParts.length);
-        
         return hBox;
     }
     

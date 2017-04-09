@@ -26,13 +26,13 @@ public class MainController implements Initializable {
     List<Person> personsList = null;
     
     @FXML
-    private Button showContacts;
-    
-    @FXML
     private Accordion accordionWithContacts;
-    
+
     @FXML
-    void handleShowContacts(ActionEvent event){
+    private Button show;
+
+    @FXML
+    void handleShow(ActionEvent event) {
         //Loc vars
         People people;
         List<Person> list = null;
@@ -49,13 +49,14 @@ public class MainController implements Initializable {
             ListConnectionsResponse response = people.people().connections()
                     .list("people/me")
                     .setRequestMaskIncludeField("person.names,person.emailAddresses,person.phoneNumbers")
-                    .setPageSize(5)
+//                    .setPageSize(70)
                     .execute();
             //Getting list of people from connections
             list = response.getConnections();
         } catch (Exception ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        System.out.println("The list size is " + list.size());
         //init list of persons
         personsList = list;
         //iterate over list and show mnemo contacts
@@ -78,11 +79,7 @@ public class MainController implements Initializable {
             //Add pane to collection
             titledPanes.add(titledPane);
         }
-        accordionWithContacts.getPanes().addAll(titledPanes);
-    }
-    
-    public void showMnemoContact(Person p){
-        
+accordionWithContacts.getPanes().addAll(titledPanes);
     }
     
     @Override
